@@ -1,0 +1,17 @@
+# Environnements Python
+venv/
+__pycache__/
+*.pyc
+
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Données transformées (régénérables via le code, inutile de les commit)
+data/processed/
+
+# Modèles entraînés volumineux (à adapter selon la taille)
+models/*.pkl
+
+# Système
+.DS_Store
