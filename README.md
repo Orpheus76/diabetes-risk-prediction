@@ -8,7 +8,7 @@ Prédire si un patient présente un risque de diabète à partir de 8 mesures cl
 
 ## Dataset
 
-- Source : [Pima Indians Diabetes Database](https://archive.ics.uci.edu/dataset/34/diabetes)
+- Source : [Pima Indians Diabetes Database](https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database)
 - 768 observations, 8 variables cliniques et 1 variable cible binaire (`Outcome`)
 - Problème principal : certaines colonnes contiennent des zéros médicalement peu plausibles (par exemple `Insulin = 0`), qui sont traités comme des valeurs manquantes
 
@@ -24,15 +24,15 @@ Prédire si un patient présente un risque de diabète à partir de 8 mesures cl
 
 _Résultats à compléter après l’entraînement des modèles._
 
-| Modèle | Accuracy | Precision | Recall | F1-score | ROC-AUC |
-|--------|----------|-----------|--------|----------|---------|
-| Logistic Regression |  |  |  |  |  |
-| Random Forest |  |  |  |  |  |
+| Modèle              | Accuracy | Precision | Recall | F1-score | ROC-AUC |
+| ------------------- | -------- | --------- | ------ | -------- | ------- |
+| Logistic Regression |          |           |        |          |         |
+| Random Forest       |          |           |        |          |         |
 
 ## Installation et exécution
 
 ```bash
-git clone https://github.com/Orpheus76/Diabetes-Risk-Prediction.git
+git clone https://github.com/Orpheus76/diabetes-risk-prediction.git
 cd diabetes-risk-prediction
 python3 -m venv venv
 source venv/bin/activate
@@ -45,11 +45,13 @@ jupyter notebook notebooks/01_eda.ipynb
 
 ```text
 diabetes-risk-prediction/
-├── data/raw/            # Données brutes
-├── notebooks/           # Exploration et analyse
-├── src/                 # Code réutilisable (chargement, prétraitement, entraînement)
-├── models/              # Modèles entraînés
-└── reports/figures/     # Visualisations exportées
+├── conftest.py           # configuration pytest (racine du projet)
+├── data/raw/             # Données brutes
+├── notebooks/            # Exploration et analyse
+├── src/                  # Code réutilisable (chargement, prétraitement, entraînement)
+├── tests/                # Tests unitaires (pytest)
+├── models/               # Modèles entraînés
+└── reports/figures/      # Visualisations exportées
 ```
 
 ## Pistes d’amélioration
