@@ -15,3 +15,5 @@ models/*.pkl
 
 # Système
 .DS_Store
+
+notebooks/data/
