@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from src.preprocessing import split_data, impute_missing_values, COLS_TO_IMPUTE
+from src.preprocessing import split_data, impute_missing_values, scale_features, COLS_TO_IMPUTE
 
 
 df = pd.read_csv("data/raw/diabetes.csv")
@@ -52,3 +52,13 @@ def test_imputation_replaces_zeros_with_median():
         median = X_train[c].replace(0, np.nan).median()
         assert (X_train_imputed[c] == median).sum() > 0
         assert (X_test_imputed[c] == median).sum() > 0
+
+
+def test_scaling_standardization():
+    
+    X_train, X_test, y_train, y_test = split_data(df)
+    X_train_clean, X_test_clean = impute_missing_values(X_train, X_test)
+    X_train_scaled, X_test_scaled, scaler = scale_features(X_train_clean, X_test_clean)
+
+    assert np.allclose(X_train_scaled.mean(axis=0), 0, atol=1e-7)
+    assert np.allclose(X_train_scaled.std(axis=0, ddof=0), 1, atol=1e-7)
