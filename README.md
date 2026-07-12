@@ -8,7 +8,7 @@
 Projet d'apprentissage automatique (**Machine Learning**) orienté vers l'**interprétabilité clinique et pédagogique**.
 L'objectif est de prédire le risque de diabète à partir de données médicales (Pima Indians Diabetes Dataset), de comparer un modèle linéaire (*Régression Logistique*) à un modèle non-linéaire (*Forêt Aléatoire*), et de décrypter les prédictions de la Forêt Aléatoire à l'aide de **SHAP** (*SHapley Additive exPlanations*).
 
-> **Note de portée** : ce projet est un exercice pédagogique de bout en bout (EDA → prétraitement anti-leakage → modélisation → interprétabilité → analyse critique des hyperparamètres). Il n'est **pas** un outil de diagnostic validé cliniquement — voir la section [Limites](#️-critique-scientifique--limites-du-dataset) plus bas.
+> **Note de portée** : ce projet est un exercice pédagogique de bout en bout (EDA → prétraitement anti-leakage → modélisation → interprétabilité → analyse critique des hyperparamètres). Il n'est **pas** un outil de diagnostic validé cliniquement
 
 ---
 
