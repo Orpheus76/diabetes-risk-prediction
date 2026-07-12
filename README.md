@@ -60,11 +60,12 @@ Dans un projet d'apprentissage automatique appliqué à la santé, l'évaluation
 
 ## 🔬 Méthodologie & Pipeline Pédagogique
 
-Le projet est divisé en 3 notebooks séquentiels, conçus pour être compréhensibles par un public non-initié :
+Le projet est divisé en 4 notebooks séquentiels, conçus pour être compréhensibles par un public non-initié :
 
 1. **`01_eda.ipynb` (Exploration des données)** : Analyse visuelle des distributions, de l'asymétrie des classes (65% vs 35%) et des corrélations cliniques.
 2. **`02_preprocessing.ipynb` (Prétraitement & Data Leakage)** : Découpage stratifié Train/Test ($80\% / 20\%$), imputation par la médiane et standardisation (`StandardScaler`) en veillant à ne jamais exposer les données de test à l'étape d'apprentissage.
 3. **`03_modeling.ipynb` (Modélisation & Interprétabilité)** : Entraînement, comparaison et dissection des modèles via des visualisations 2D des frontières de décision, l'inspection d'un arbre de décision individuel et une analyse de contribution SHAP.
+4. **`04_model_evolution.ipynb` (Évolution & Compromis MLOps)** : Étude dynamique des performances cliniques (*Recall*, *Accuracy*) et du temps de calcul (*Training Latency*) selon le nombre d'arbres de décision (*rounds* / `n_estimators` de 1 à 200), illustrant le point d'équilibre entre gain clinique et coût computationnel.
 
 ---
 
@@ -72,16 +73,23 @@ Le projet est divisé en 3 notebooks séquentiels, conçus pour être compréhen
 
 Les deux algorithmes ont été évalués sur l'échantillon de test (`X_test`, 154 patientes dont 54 diabétiques) :
 
-| Modèle | Accuracy | Precision | Recall (Sensibilité) ⭐ | F1-score | ROC-AUC |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Logistic Regression** (Baseline linéaire) | `70.78 %` | `60.00 %` | `50.00 %` | `54.55 %` | `0.8130` |
-| **Random Forest** (Forêt Aléatoire non-linéaire) | **`77.27 %`** | **`70.21 %`** | **`61.11 %`** | **`65.35 %`** | **`0.8181`** |
+| Modèle | Accuracy | Precision | Recall (Sensibilité) ⭐ | F1-score | ROC-AUC | Temps d'entraînement |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Logistic Regression** (Baseline linéaire) | `70.78 %` | `60.00 %` | `50.00 %` | `54.55 %` | `0.8130` | **`~5 ms`** ⚡ |
+| **Random Forest** (`100 arbres`) | **`77.27 %`** | **`70.21 %`** | **`61.11 %`** | **`65.35 %`** | **`0.8181`** | `~110 ms` |
 
-### 🔍 Analyse clinique des résultats :
+### 🔍 Analyse clinique et computationnelle des résultats :
 - **Le saut de Recall (+11.1 %)** : Sur les 54 patientes diabétiques du jeu de test, la Régression Logistique en détecte 27 (*Recall = 50%*), tandis que la Forêt Aléatoire en détecte 33 (*Recall = 61.1%*).  
   **La Forêt Aléatoire permet donc de sauver 6 patients supplémentaires de l'errance médicale sur un simple échantillon de 154 personnes !**
 - **L'amélioration du compromis clinique (F1-score à +10.8 %)** : En progressant nettement de `54.55 %` à `65.35 %`, le F1-score démontre que la Forêt Aléatoire ne se contente pas de maximiser la détection des malades (*Recall*), mais accroît simultanément la fiabilité de ses alertes (*Precision* passant de `60.00 %` à `70.21 %`). L'algorithme offre ainsi un équilibre clinique nettement supérieur en réduisant conjointement les diagnostics omis et les examens de contrôle superflus.
+- **Le compromis MLOps (Coût vs Performance)** : La Régression Logistique est 20 fois plus rapide (`~5 ms` contre `~110 ms`), mais le gain de +11.1 % en détection clinique justifie largement l'investissement computationnel d'une Forêt Aléatoire en milieu hospitalier.
 - **Capacité de discrimination (ROC-AUC)** : Avec un score `ROC-AUC ~ 0.82`, les deux modèles montrent une excellente aptitude globale à hiérarchiser les probabilités de risque, quelle que soit la variation du seuil de décision.
+
+### ⚖️ Critique Scientifique & Limites du Dataset :
+Dans un souci de rigueur scientifique et d'ingénierie critique, il est indispensable de souligner les limites inhérentes à notre jeu de données :
+1. **Puissance statistique et taille de l'échantillon (`768 observations`)** : Sur notre jeu de test de 154 patientes, chaque patiente représente $\approx 0,65 \%$ d'Accuracy. Bien que le gain de 6 patients détectés par la Forêt Aléatoire soit cliniquement crucial, une validation croisée (*K-Fold Cross-Validation*) ou une étude multicentrique sur plus de 10 000 patients est requise avant toute certification médicale.
+2. **Biais de sélection et généralisation restreinte (*Out-of-Distribution*)** : La base de données *Pima Indians* a été collectée exclusivement auprès de femmes autochtones âgées d'au moins 21 ans résidant en Arizona. Le modèle appris ne peut pas être déployé tel quel sur des populations européennes, asiatiques ou masculines sans risque important de biais de distribution démographique.
+3. **Absence de biomarqueurs sanguins modernes** : Le diagnostic international du diabète repose aujourd'hui largement sur le dosage de l'hémoglobine glycée (*HbA1c*), non disponible dans ce jeu de données historique.
 
 ---
 
@@ -130,7 +138,8 @@ diabetes-risk-prediction/
 ├── notebooks/                 # Notebooks pédagogiques et interactifs
 │   ├── 01_eda.ipynb           # Analyse Exploratoire des Données
 │   ├── 02_preprocessing.ipynb # Prétraitement rigoureux & Anti-leakage
-│   └── 03_modeling.ipynb      # Modélisation, Frontières de décision & SHAP
+│   ├── 03_modeling.ipynb      # Modélisation, Frontières de décision & SHAP
+│   └── 04_model_evolution.ipynb # Évolution des performances & compromis MLOps
 ├── src/                       # Code source réutilisable et modularisé
 │   ├── data_loader.py         # Chargement des données
 │   ├── preprocessing.py       # Pipeline d'imputation et de standardisation
