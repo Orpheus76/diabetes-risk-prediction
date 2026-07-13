@@ -8,7 +8,7 @@
 Projet d'apprentissage automatique (**Machine Learning**) orienté vers l'**interprétabilité clinique et pédagogique**.
 L'objectif est de prédire le risque de diabète à partir de données médicales (Pima Indians Diabetes Dataset), de comparer un modèle linéaire (*Régression Logistique*) à un modèle non-linéaire (*Forêt Aléatoire*), et de décrypter les prédictions de la Forêt Aléatoire à l'aide de **SHAP** (*SHapley Additive exPlanations*).
 
-> **Note de portée** : ce projet est un exercice pédagogique de bout en bout (EDA → prétraitement anti-leakage → modélisation → interprétabilité → analyse critique des hyperparamètres). Il n'est **pas** un outil de diagnostic validé cliniquement — voir la section [Limites](#️-critique-scientifique--limites-du-dataset) plus bas.
+> **Note de portée** : ce projet est un exercice pédagogique de bout en bout (EDA → prétraitement anti-leakage → modélisation → interprétabilité → analyse critique des hyperparamètres). Il n'est **pas** un outil de diagnostic validé cliniquement
 
 ---
 
@@ -83,7 +83,7 @@ Toutes les métriques ci-dessous se calculent à partir de quatre quantités, ob
 
 ## 🔬 Méthodologie & Pipeline Pédagogique
 
-Le projet est divisé en 4 notebooks séquentiels, conçus pour être compréhensibles par un public non-initié :
+Le projet est divisé en 4 notebooks séquentiels :
 
 1. **`01_eda.ipynb` (Exploration des données)** : Analyse visuelle des distributions, de l'asymétrie des classes (65 % vs 35 %) et des corrélations cliniques.
 2. **`02_preprocessing.ipynb` (Prétraitement & Data Leakage)** : Découpage stratifié Train/Test (80 % / 20 %), imputation par la médiane et standardisation (`StandardScaler`) en veillant à ne jamais exposer les données de test à l'étape d'apprentissage.
@@ -114,7 +114,7 @@ Les deux algorithmes ont été évalués sur l'échantillon de test (`X_test`, 1
 - **Configuration retenue** : `RandomForestClassifier(n_estimators=100, max_depth=None, random_state=42)` constitue le **meilleur compromis observé sur ce split train/test** entre performance clinique et coût computationnel — à confirmer par validation croisée avant tout usage en production (voir limites ci-dessous).
 
 ### ⚖️ Critique Scientifique & Limites du Dataset :
-Dans un souci de rigueur scientifique, il est indispensable de souligner les limites inhérentes à ce projet :
+
 1. **Puissance statistique et évaluation sur split unique** : Le jeu de test ne compte que 154 patientes ; chaque patiente représente ≈ 0,65 % d'Accuracy et ≈ 1,85 % de Recall. Le choix d'hyperparamètres réalisé dans `04_model_evolution.ipynb` repose sur ce même split de test évalué à répétition, ce qui peut légèrement le sur-ajuster à cet échantillon précis. Une **K-Fold Cross-Validation**, voire une étude multicentrique sur une cohorte bien plus large, serait nécessaire avant toute certification médicale.
 2. **Biais de sélection et généralisation restreinte (*Out-of-Distribution*)** : La base *Pima Indians* a été collectée exclusivement auprès de femmes autochtones âgées d'au moins 21 ans résidant en Arizona. Le modèle appris ne peut pas être déployé tel quel sur des populations européennes, asiatiques ou masculines sans risque important de biais de distribution démographique.
 3. **Absence de biomarqueurs sanguins modernes** : Le diagnostic international du diabète repose aujourd'hui largement sur le dosage de l'hémoglobine glycée (*HbA1c*), non disponible dans ce jeu de données historique.
@@ -123,8 +123,6 @@ Dans un souci de rigueur scientifique, il est indispensable de souligner les lim
 ---
 
 ## 🧠 Interprétabilité du Modèle (SHAP)
-
-Pour ouvrir la "boîte noire" de la Forêt Aléatoire et faciliter la confiance des praticiens de santé, nous avons utilisé la méthode **SHAP** basée sur la théorie des jeux :
 
 1. **`Glucose` (Taux de sucre sanguin)** : De loin le facteur clinique le plus déterminant. Des valeurs élevées de glucose poussent fortement la prédiction vers la classe positive (diabète).
 2. **`BMI` (Indice de Masse Corporelle)** : Le deuxième facteur de risque majeur. Un surpoids/obésité contribue nettement à l'augmentation du score de risque.
