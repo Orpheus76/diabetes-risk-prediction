@@ -1,34 +1,26 @@
-import pandas as pd
 from src.train import train_logistic_regression, train_random_forest, evaluate_model
 
-# Chargement des données nettoyées que nous avons créées précédemment
 
-X_train = pd.read_csv("data/processed/X_train_clean.csv")
-y_train = pd.read_csv("data/processed/y_train.csv").values.ravel()
+def test_training_models(preprocessed_data):
 
-# .values.ravel() sert à transformer le DataFrame de y_train en un tableau numpy 1D 
-# (indispensable pour que le modèle puisse l'utiliser correctement)
-
-X_test = pd.read_csv("data/processed/X_test_clean.csv")
-y_test = pd.read_csv("data/processed/y_test.csv").values.ravel()
-
-
-def test_training_models():
+    X_train_scaled, X_test_scaled, y_train, y_test = preprocessed_data
 
     # 1. Entraîner la régression logistique
-    lr_model = train_logistic_regression(X_train, y_train)
+    lr_model = train_logistic_regression(X_train_scaled, y_train)
     
     assert hasattr(lr_model, 'predict')
     assert hasattr(lr_model, 'predict_proba')
 
     # 2. Entraîner la forêt aléatoire
-    rf_model = train_random_forest(X_train, y_train)
+    rf_model = train_random_forest(X_train_scaled, y_train)
 
     assert hasattr(rf_model, 'predict')
     assert hasattr(rf_model, 'predict_proba')
 
     
-def test_evaluate_model():
+def test_evaluate_model(preprocessed_data):
+
+    X_train, X_test, y_train, y_test = preprocessed_data
 
     lr_model = train_logistic_regression(X_train, y_train)
     scores = evaluate_model(lr_model, X_test, y_test)
